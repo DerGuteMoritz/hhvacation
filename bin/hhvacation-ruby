@@ -10,7 +10,11 @@ unless ARGV[0]
 end
 
 config = YAML.load_file(ARGV[0])
-mysql = Mysql.real_connect(config['host'], config['user'], config['password'], config['database'])
+mysql = Mysql.real_connect(config['database']['host'],
+                           config['database']['user'],
+                           config['database']['password'],
+                           config['database']['database'])
+
 mail = Mail.new($stdin.read)
 recipients = [mail.to, mail.cc, mail.bcc].compact.flatten.map { |r| "'#{mysql.quote(r)}'" }.join(', ')
 
@@ -20,10 +24,13 @@ mysql.query("SELECT email, subject, message, cache FROM vacation WHERE email IN 
   res.each_hash do |row|
     next if row['cache'].split(',').include? mail.from.first
 
-    Mail.deliver :from    => row['email'],
-                 :to      => [mail.reply_to, mail.from].compact.flatten.first, 
-                 :subject => row['subject'],
-                 :body    => row['message']
+    reply = Mail.new :from    => row['email'],
+                     :to      => [mail.reply_to, mail.from].compact.flatten.first, 
+                     :subject => row['subject'],
+                     :body    => row['message']
+
+    reply.delivery_method(config['mail']['method'], config['method'] - 'method') if config['mail']
+    reply.deliver!
     
     mysql.query(%[UPDATE vacation SET cache = CONCAT(cache, ',', '%s') WHERE email = '%s'] %
                 [mysql.quote(mail.from.first), mysql.quote(row['email'])])

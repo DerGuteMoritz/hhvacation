@@ -10,9 +10,10 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Moritz Heidkamp"]
   s.date = %q{2010-08-13}
+  s.default_executable = %q{hhvacation-ruby}
   s.description = %q{This is a drop-in replacement for the apparently no longer maintained hhvacation program included in the GNU Hosting Helper (http://hostingsoftware.net/) suite. It only operates on so called "virtual" vacation responds (i.e. they are kept in a MySQL database).}
   s.email = %q{moritz@twoticketsplease.de}
-  s.executables = ["hhvacation-ruby~", "hhvacation-ruby"]
+  s.executables = ["hhvacation-ruby"]
   s.extra_rdoc_files = [
     "LICENSE",
      "README.md"
