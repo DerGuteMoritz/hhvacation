@@ -10,6 +10,8 @@ begin
     gem.email = "moritz@twoticketsplease.de"
     gem.homepage = "http://github.com/DerGuteMoritz/hhvacation"
     gem.authors = ["Moritz Heidkamp"]
+    gem.files = FileList['bin/hhvacation-ruby', 'README.md', 'LICENSE']
+    gem.executables = 'hhvacation-ruby'
     gem.add_dependency 'mail'
     gem.add_dependency 'mysql'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings

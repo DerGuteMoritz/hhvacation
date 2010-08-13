@@ -19,14 +19,9 @@ Gem::Specification.new do |s|
      "README.md"
   ]
   s.files = [
-    ".document",
-     ".gitignore",
-     "LICENSE",
+    "LICENSE",
      "README.md",
-     "Rakefile",
-     "VERSION",
-     "bin/hhvacation-ruby",
-     "hhvacation.gemspec"
+     "bin/hhvacation-ruby"
   ]
   s.homepage = %q{http://github.com/DerGuteMoritz/hhvacation}
   s.rdoc_options = ["--charset=UTF-8"]

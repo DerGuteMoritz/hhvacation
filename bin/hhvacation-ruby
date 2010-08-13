@@ -15,6 +15,11 @@ mysql = Mysql.real_connect(config['database']['host'],
                            config['database']['password'],
                            config['database']['database'])
 
+mail_config = {
+  :method => config['mail']['method'],
+  :settings => config['mail'].inject({ }) { |m,(k,v)| m[k.to_sym] = v if k != 'method'; m }
+}
+
 mail = Mail.new($stdin.read)
 recipients = [mail.to, mail.cc, mail.bcc].compact.flatten.map { |r| "'#{mysql.quote(r)}'" }.join(', ')
 
@@ -29,7 +34,7 @@ mysql.query("SELECT email, subject, message, cache FROM vacation WHERE email IN 
                      :subject => row['subject'],
                      :body    => row['message']
 
-    reply.delivery_method(config['mail']['method'], config['method'] - 'method') if config['mail']
+    reply.delivery_method(mail_config[:method].to_sym, mail_config[:settings]) if mail_config[:method]
     reply.deliver!
     
     mysql.query(%[UPDATE vacation SET cache = CONCAT(cache, ',', '%s') WHERE email = '%s'] %
