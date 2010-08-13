@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'mail'
+require 'mysql'
+require 'yaml'
+
+unless ARGV[0]
+  $stderr.puts "usage: #{$0} CONFIG_FILE"
+  exit 1
+end
+
+config = YAML.load_file(ARGV[0])
+mysql = Mysql.real_connect(config['host'], config['user'], config['password'], config['database'])
+mail = Mail.new($stdin.read)
+recipients = [mail.to, mail.cc, mail.bcc].compact.flatten.map { |r| "'#{mysql.quote(r)}'" }.join(', ')
+
+exit if recipients.empty?
+
+mysql.query("SELECT email, subject, message, cache FROM vacation WHERE email IN (#{recipients})") do |res|
+  res.each_hash do |row|
+    next if row['cache'].split(',').include? mail.from.first
+
+    Mail.deliver :from    => row['email'],
+                 :to      => [mail.reply_to, mail.from].compact.flatten.first, 
+                 :subject => row['subject'],
+                 :body    => row['message']
+    
+    mysql.query(%[UPDATE vacation SET cache = CONCAT(cache, ',', '%s') WHERE email = '%s'] %
+                [mysql.quote(mail.from.first), mysql.quote(row['email'])])
+  end
+end
