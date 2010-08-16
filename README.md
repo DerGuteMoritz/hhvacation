@@ -70,4 +70,4 @@ as settings for the selected method.
       
 ## Copyright
 
-Copyright (c) 2010 Moritz Heidkamp. See LICENSE for details.
+Copyright (c) 2010 Moritz Heidkamp and Christof Spies. See LICENSE for details.
